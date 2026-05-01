@@ -1,0 +1,1003 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VoltZone — Electronics & Gadgets</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #13131a;
+    --surface2: #1c1c28;
+    --accent: #00e5ff;
+    --accent2: #7c3aed;
+    --text: #f0f0f5;
+    --muted: #8888aa;
+    --border: rgba(255,255,255,0.08);
+    --card-bg: #16161f;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); overflow-x: hidden; }
+  h1,h2,h3,h4,h5 { font-family: 'Syne', sans-serif; }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(10,10,15,0.92); backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 1.5rem; height: 64px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.4rem; color: var(--accent); letter-spacing: -0.5px; cursor: pointer; }
+  .logo span { color: var(--text); }
+  .nav-links { display: flex; gap: 2rem; list-style: none; }
+  .nav-links a { color: var(--muted); text-decoration: none; font-size: 0.9rem; font-weight: 500; transition: color 0.2s; cursor: pointer; }
+  .nav-links a:hover { color: var(--text); }
+  .nav-cta { background: var(--accent); color: #000; font-weight: 700; font-size: 0.85rem; padding: 0.5rem 1.2rem; border-radius: 6px; cursor: pointer; border: none; font-family: 'Syne', sans-serif; letter-spacing: 0.3px; }
+  .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; background: none; border: none; padding: 4px; }
+  .hamburger span { display: block; width: 22px; height: 2px; background: var(--text); border-radius: 2px; transition: all 0.3s; }
+
+  /* PAGES */
+  .page { display: none; min-height: 100vh; padding-top: 64px; }
+  .page.active { display: block; }
+
+  /* HOME */
+  .hero {
+    min-height: calc(100vh - 64px);
+    display: flex; align-items: center;
+    padding: 4rem 1.5rem 2rem;
+    position: relative; overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; top: -200px; right: -200px;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(0,229,255,0.08) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+  .hero::after {
+    content: '';
+    position: absolute; bottom: -100px; left: -100px;
+    width: 400px; height: 400px;
+    background: radial-gradient(circle, rgba(124,58,237,0.07) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+  .hero-inner { max-width: 1100px; margin: 0 auto; width: 100%; display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; }
+  .hero-badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(0,229,255,0.1); border: 1px solid rgba(0,229,255,0.25); border-radius: 100px; padding: 0.3rem 0.9rem; font-size: 0.78rem; color: var(--accent); margin-bottom: 1.5rem; font-weight: 500; }
+  .hero-badge::before { content: ''; display: block; width: 6px; height: 6px; background: var(--accent); border-radius: 50%; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+  .hero h1 { font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 800; line-height: 1.05; margin-bottom: 1.2rem; letter-spacing: -1px; }
+  .hero h1 .accent { color: var(--accent); }
+  .hero p { font-size: 1.05rem; color: var(--muted); line-height: 1.7; margin-bottom: 2rem; max-width: 480px; }
+  .hero-btns { display: flex; gap: 1rem; flex-wrap: wrap; }
+  .btn-primary { background: var(--accent); color: #000; font-weight: 700; padding: 0.8rem 1.8rem; border-radius: 8px; border: none; cursor: pointer; font-size: 0.95rem; font-family: 'Syne', sans-serif; transition: transform 0.2s, box-shadow 0.2s; }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,229,255,0.25); }
+  .btn-outline { background: transparent; color: var(--text); font-weight: 600; padding: 0.8rem 1.8rem; border-radius: 8px; border: 1px solid var(--border); cursor: pointer; font-size: 0.95rem; font-family: 'Syne', sans-serif; transition: border-color 0.2s, background 0.2s; }
+  .btn-outline:hover { border-color: rgba(255,255,255,0.2); background: rgba(255,255,255,0.04); }
+  .hero-visual { position: relative; }
+  .hero-phone {
+    width: 100%; max-width: 340px; margin: 0 auto;
+    background: var(--surface2); border-radius: 24px; border: 1px solid var(--border);
+    padding: 1.5rem; aspect-ratio: 9/16; display: flex; flex-direction: column; gap: 1rem;
+    box-shadow: 0 40px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.05);
+  }
+  .phone-header { display: flex; align-items: center; justify-content: space-between; }
+  .phone-logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1rem; color: var(--accent); }
+  .phone-cart { width: 32px; height: 32px; background: rgba(0,229,255,0.1); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; }
+  .phone-banner { background: linear-gradient(135deg, #1a1a2e, #16213e); border-radius: 14px; padding: 1.2rem; border: 1px solid rgba(0,229,255,0.15); }
+  .phone-banner-tag { font-size: 0.65rem; color: var(--accent); font-weight: 600; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 0.4rem; }
+  .phone-banner h3 { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700; margin-bottom: 0.3rem; }
+  .phone-banner p { font-size: 0.7rem; color: var(--muted); }
+  .phone-price { font-size: 1.1rem; font-weight: 700; color: var(--accent); margin-top: 0.5rem; }
+  .phone-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.6rem; flex: 1; }
+  .phone-card { background: var(--card-bg); border-radius: 12px; padding: 0.7rem; border: 1px solid var(--border); }
+  .phone-card-emoji { font-size: 1.4rem; margin-bottom: 0.4rem; }
+  .phone-card-name { font-size: 0.65rem; color: var(--muted); font-weight: 500; }
+  .phone-card-price { font-size: 0.8rem; font-weight: 700; color: var(--text); margin-top: 2px; }
+
+  /* STATS */
+  .stats { padding: 3rem 1.5rem; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+  .stats-inner { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: repeat(4, 1fr); gap: 2rem; }
+  .stat-item { text-align: center; }
+  .stat-num { font-family: 'Syne', sans-serif; font-size: 2rem; font-weight: 800; color: var(--accent); }
+  .stat-label { font-size: 0.85rem; color: var(--muted); margin-top: 4px; }
+
+  /* FEATURED */
+  .section { padding: 5rem 1.5rem; }
+  .section-inner { max-width: 1100px; margin: 0 auto; }
+  .section-header { margin-bottom: 3rem; }
+  .section-tag { font-size: 0.75rem; font-weight: 600; color: var(--accent); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 0.6rem; }
+  .section-title { font-size: clamp(1.8rem, 3vw, 2.5rem); font-weight: 800; letter-spacing: -0.5px; }
+  .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1.5rem; }
+  .product-card {
+    background: var(--card-bg); border-radius: 16px; border: 1px solid var(--border);
+    overflow: hidden; transition: transform 0.3s, border-color 0.3s;
+    cursor: pointer;
+  }
+  .product-card:hover { transform: translateY(-4px); border-color: rgba(0,229,255,0.2); }
+  .product-img {
+    width: 100%; aspect-ratio: 4/3;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 4rem; background: var(--surface2);
+    position: relative; overflow: hidden;
+  }
+  .product-img .badge { position: absolute; top: 12px; left: 12px; background: var(--accent); color: #000; font-size: 0.7rem; font-weight: 700; padding: 3px 10px; border-radius: 100px; font-family: 'Syne', sans-serif; }
+  .product-info { padding: 1.2rem; }
+  .product-cat { font-size: 0.72rem; color: var(--accent); font-weight: 600; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 0.4rem; }
+  .product-name { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700; margin-bottom: 0.3rem; }
+  .product-desc { font-size: 0.82rem; color: var(--muted); line-height: 1.5; margin-bottom: 1rem; }
+  .product-footer { display: flex; align-items: center; justify-content: space-between; }
+  .product-price { font-family: 'Syne', sans-serif; font-size: 1.15rem; font-weight: 700; }
+  .product-price .old { font-size: 0.8rem; color: var(--muted); text-decoration: line-through; margin-right: 6px; font-weight: 400; font-family: 'DM Sans', sans-serif; }
+  .add-btn { background: var(--accent); color: #000; border: none; border-radius: 8px; width: 36px; height: 36px; font-size: 1.2rem; cursor: pointer; display: flex; align-items: center; justify-content: center; font-weight: 700; transition: transform 0.2s; }
+  .add-btn:hover { transform: scale(1.1); }
+
+  /* CATEGORIES */
+  .cat-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 1rem; }
+  .cat-card { background: var(--card-bg); border-radius: 14px; border: 1px solid var(--border); padding: 1.5rem 1rem; text-align: center; cursor: pointer; transition: border-color 0.2s, background 0.2s; }
+  .cat-card:hover { border-color: rgba(0,229,255,0.25); background: rgba(0,229,255,0.04); }
+  .cat-icon { font-size: 2rem; margin-bottom: 0.7rem; }
+  .cat-name { font-family: 'Syne', sans-serif; font-size: 0.85rem; font-weight: 700; margin-bottom: 2px; }
+  .cat-count { font-size: 0.72rem; color: var(--muted); }
+
+  /* PROMO BANNER */
+  .promo { margin: 2rem 0; background: linear-gradient(135deg, rgba(124,58,237,0.15), rgba(0,229,255,0.1)); border: 1px solid rgba(0,229,255,0.15); border-radius: 20px; padding: 3rem 2rem; text-align: center; }
+  .promo h2 { font-size: clamp(1.5rem, 3vw, 2.2rem); font-weight: 800; margin-bottom: 0.8rem; letter-spacing: -0.5px; }
+  .promo p { color: var(--muted); margin-bottom: 1.5rem; }
+  .promo-timer { display: flex; gap: 1rem; justify-content: center; margin-bottom: 2rem; }
+  .timer-block { background: var(--surface2); border-radius: 10px; padding: 0.8rem 1rem; min-width: 70px; text-align: center; border: 1px solid var(--border); }
+  .timer-num { font-family: 'Syne', sans-serif; font-size: 1.8rem; font-weight: 800; color: var(--accent); }
+  .timer-label { font-size: 0.65rem; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
+
+  /* PRODUCTS PAGE */
+  .page-header { padding: 3rem 1.5rem 2rem; border-bottom: 1px solid var(--border); }
+  .page-header-inner { max-width: 1100px; margin: 0 auto; }
+  .page-header h1 { font-size: 2.2rem; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 0.5rem; }
+  .page-header p { color: var(--muted); }
+  .filters { display: flex; gap: 0.8rem; flex-wrap: wrap; margin-top: 1.5rem; }
+  .filter-btn { background: var(--surface2); border: 1px solid var(--border); color: var(--muted); padding: 0.45rem 1rem; border-radius: 100px; font-size: 0.82rem; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all 0.2s; }
+  .filter-btn.active, .filter-btn:hover { background: rgba(0,229,255,0.1); border-color: rgba(0,229,255,0.3); color: var(--accent); }
+
+  /* ABOUT PAGE */
+  .about-hero { padding: 4rem 1.5rem; }
+  .about-hero-inner { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; }
+  .about-hero h1 { font-size: clamp(2rem, 4vw, 3rem); font-weight: 800; letter-spacing: -1px; margin-bottom: 1rem; }
+  .about-hero p { color: var(--muted); line-height: 1.8; margin-bottom: 1rem; }
+  .about-visual { background: var(--surface2); border-radius: 20px; aspect-ratio: 4/3; display: flex; align-items: center; justify-content: center; font-size: 5rem; border: 1px solid var(--border); }
+  .team-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1.5rem; margin-top: 3rem; }
+  .team-card { background: var(--card-bg); border-radius: 16px; border: 1px solid var(--border); padding: 1.5rem; text-align: center; }
+  .team-avatar { width: 80px; height: 80px; border-radius: 50%; background: var(--surface2); display: flex; align-items: center; justify-content: center; font-size: 2rem; margin: 0 auto 1rem; border: 2px solid rgba(0,229,255,0.2); }
+  .team-name { font-family: 'Syne', sans-serif; font-weight: 700; margin-bottom: 4px; }
+  .team-role { font-size: 0.82rem; color: var(--accent); }
+  .values-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1.2rem; }
+  .value-card { background: var(--card-bg); border-radius: 14px; border: 1px solid var(--border); padding: 1.5rem; }
+  .value-icon { font-size: 1.8rem; margin-bottom: 0.8rem; }
+  .value-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1rem; margin-bottom: 0.4rem; }
+  .value-desc { font-size: 0.83rem; color: var(--muted); line-height: 1.6; }
+
+  /* BLOG PAGE */
+  .blog-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 1.5rem; }
+  .blog-card { background: var(--card-bg); border-radius: 16px; border: 1px solid var(--border); overflow: hidden; cursor: pointer; transition: transform 0.3s, border-color 0.3s; }
+  .blog-card:hover { transform: translateY(-4px); border-color: rgba(0,229,255,0.2); }
+  .blog-img { width: 100%; aspect-ratio: 16/9; background: var(--surface2); display: flex; align-items: center; justify-content: center; font-size: 3rem; }
+  .blog-content { padding: 1.2rem; }
+  .blog-tag { display: inline-block; font-size: 0.7rem; color: var(--accent); font-weight: 600; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 0.6rem; }
+  .blog-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1rem; margin-bottom: 0.5rem; line-height: 1.4; }
+  .blog-excerpt { font-size: 0.82rem; color: var(--muted); line-height: 1.6; margin-bottom: 1rem; }
+  .blog-meta { display: flex; align-items: center; gap: 0.8rem; font-size: 0.75rem; color: var(--muted); }
+  .blog-author-dot { width: 28px; height: 28px; border-radius: 50%; background: var(--surface2); display: flex; align-items: center; justify-content: center; font-size: 0.7rem; }
+
+  /* CONTACT PAGE */
+  .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start; }
+  .contact-info h2 { font-size: 1.8rem; font-weight: 800; margin-bottom: 1rem; }
+  .contact-info p { color: var(--muted); line-height: 1.8; margin-bottom: 2rem; }
+  .contact-items { display: flex; flex-direction: column; gap: 1rem; }
+  .contact-item { display: flex; align-items: center; gap: 1rem; }
+  .contact-icon { width: 44px; height: 44px; background: rgba(0,229,255,0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0; border: 1px solid rgba(0,229,255,0.15); }
+  .contact-text-label { font-size: 0.75rem; color: var(--muted); }
+  .contact-text-val { font-weight: 500; font-size: 0.9rem; }
+  .form-card { background: var(--card-bg); border-radius: 20px; border: 1px solid var(--border); padding: 2rem; }
+  .form-group { margin-bottom: 1.2rem; }
+  .form-label { display: block; font-size: 0.82rem; color: var(--muted); margin-bottom: 0.5rem; font-weight: 500; }
+  .form-input, .form-textarea {
+    width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: 10px;
+    color: var(--text); padding: 0.75rem 1rem; font-family: 'DM Sans', sans-serif; font-size: 0.9rem;
+    outline: none; transition: border-color 0.2s;
+  }
+  .form-input:focus, .form-textarea:focus { border-color: rgba(0,229,255,0.4); }
+  .form-textarea { min-height: 120px; resize: vertical; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+
+  /* TERMS PAGE */
+  .terms-content { max-width: 760px; margin: 0 auto; }
+  .terms-content h2 { font-size: 1.4rem; font-weight: 700; margin: 2.5rem 0 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border); }
+  .terms-content p { color: var(--muted); line-height: 1.8; margin-bottom: 1rem; font-size: 0.93rem; }
+  .terms-content ul { color: var(--muted); line-height: 1.8; padding-left: 1.5rem; margin-bottom: 1rem; font-size: 0.93rem; }
+
+  /* CART MODAL */
+  .cart-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 200; }
+  .cart-overlay.open { display: flex; justify-content: flex-end; }
+  .cart-panel { width: min(420px, 100vw); background: var(--surface); height: 100vh; overflow-y: auto; padding: 2rem 1.5rem; display: flex; flex-direction: column; }
+  .cart-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem; }
+  .cart-header h2 { font-size: 1.3rem; font-weight: 800; }
+  .close-btn { background: var(--surface2); border: none; color: var(--text); width: 36px; height: 36px; border-radius: 8px; cursor: pointer; font-size: 1.1rem; }
+  .cart-item { display: flex; gap: 1rem; padding: 1rem 0; border-bottom: 1px solid var(--border); }
+  .cart-item-img { width: 60px; height: 60px; background: var(--surface2); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; flex-shrink: 0; }
+  .cart-item-name { font-weight: 600; font-size: 0.9rem; margin-bottom: 4px; }
+  .cart-item-price { color: var(--accent); font-weight: 700; font-size: 0.9rem; }
+  .cart-item-qty { display: flex; align-items: center; gap: 0.5rem; margin-top: 0.5rem; }
+  .qty-btn { background: var(--surface2); border: 1px solid var(--border); color: var(--text); width: 28px; height: 28px; border-radius: 6px; cursor: pointer; font-size: 0.9rem; }
+  .cart-total { margin-top: auto; padding-top: 1.5rem; border-top: 1px solid var(--border); }
+  .cart-total-row { display: flex; justify-content: space-between; margin-bottom: 0.6rem; font-size: 0.9rem; color: var(--muted); }
+  .cart-total-row.total { font-size: 1.1rem; color: var(--text); font-weight: 700; margin-top: 0.5rem; }
+  .checkout-btn { width: 100%; background: var(--accent); color: #000; border: none; border-radius: 10px; padding: 1rem; font-size: 1rem; font-weight: 700; cursor: pointer; font-family: 'Syne', sans-serif; margin-top: 1rem; transition: transform 0.2s; }
+  .checkout-btn:hover { transform: translateY(-2px); }
+  .empty-cart { text-align: center; color: var(--muted); padding: 3rem 0; }
+  .empty-cart-icon { font-size: 3rem; margin-bottom: 1rem; }
+  .cart-count { background: var(--accent); color: #000; border-radius: 50%; width: 20px; height: 20px; font-size: 0.7rem; font-weight: 700; display: flex; align-items: center; justify-content: center; margin-left: 4px; }
+
+  /* CHECKOUT */
+  .checkout-success { text-align: center; padding: 3rem 1.5rem; }
+  .success-icon { font-size: 4rem; margin-bottom: 1rem; }
+  .success-title { font-size: 1.8rem; font-weight: 800; margin-bottom: 0.5rem; color: var(--accent); }
+  .success-sub { color: var(--muted); }
+
+  /* MOBILE NAV OVERLAY */
+  .mobile-nav { display: none; position: fixed; inset: 0; background: var(--bg); z-index: 99; padding: 80px 2rem 2rem; flex-direction: column; gap: 1.5rem; }
+  .mobile-nav.open { display: flex; }
+  .mobile-nav a { font-family: 'Syne', sans-serif; font-size: 1.8rem; font-weight: 700; color: var(--text); text-decoration: none; cursor: pointer; }
+  .mobile-nav a:hover { color: var(--accent); }
+
+  /* FOOTER */
+  footer { background: var(--surface); border-top: 1px solid var(--border); padding: 3rem 1.5rem 2rem; }
+  .footer-inner { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 3rem; margin-bottom: 2rem; }
+  .footer-brand p { color: var(--muted); font-size: 0.85rem; line-height: 1.7; margin-top: 0.8rem; max-width: 280px; }
+  .footer-col h4 { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.9rem; margin-bottom: 1rem; }
+  .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 0.6rem; }
+  .footer-col ul li { font-size: 0.84rem; color: var(--muted); cursor: pointer; transition: color 0.2s; }
+  .footer-col ul li:hover { color: var(--text); }
+  .footer-bottom { border-top: 1px solid var(--border); padding-top: 1.5rem; display: flex; align-items: center; justify-content: space-between; }
+  .footer-bottom p { font-size: 0.8rem; color: var(--muted); }
+  .footer-badges { display: flex; gap: 0.5rem; }
+  .payment-badge { background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; padding: 4px 10px; font-size: 0.72rem; color: var(--muted); font-weight: 600; }
+
+  /* NEWSLETTER */
+  .newsletter { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 3rem 2rem; text-align: center; margin: 2rem 0; }
+  .newsletter h3 { font-size: 1.6rem; font-weight: 800; margin-bottom: 0.5rem; }
+  .newsletter p { color: var(--muted); margin-bottom: 1.5rem; font-size: 0.9rem; }
+  .newsletter-form { display: flex; gap: 0.8rem; max-width: 440px; margin: 0 auto; }
+  .newsletter-input { flex: 1; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 0.75rem 1rem; color: var(--text); font-family: 'DM Sans', sans-serif; font-size: 0.9rem; outline: none; }
+  .newsletter-input:focus { border-color: rgba(0,229,255,0.35); }
+  .newsletter-btn { background: var(--accent); color: #000; border: none; border-radius: 8px; padding: 0.75rem 1.3rem; font-weight: 700; cursor: pointer; font-family: 'Syne', sans-serif; white-space: nowrap; }
+
+  /* TOAST */
+  .toast { position: fixed; bottom: 2rem; right: 2rem; background: #1c1c28; border: 1px solid rgba(0,229,255,0.3); border-radius: 12px; padding: 1rem 1.5rem; z-index: 300; display: none; align-items: center; gap: 0.8rem; box-shadow: 0 8px 32px rgba(0,0,0,0.4); }
+  .toast.show { display: flex; animation: slideUp 0.3s ease; }
+  @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+  .toast-icon { font-size: 1.1rem; }
+  .toast-text { font-size: 0.88rem; font-weight: 500; }
+
+  /* PAYMENT MODAL */
+  .pay-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 400; align-items: center; justify-content: center; padding: 1rem; }
+  .pay-overlay.open { display: flex; }
+  .pay-modal { background: #13131a; border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; width: 100%; max-width: 480px; overflow: hidden; animation: modalIn 0.3s ease; }
+  @keyframes modalIn { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+  .pay-header { background: #0d0d14; padding: 1.2rem 1.5rem; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.07); }
+  .pay-header-left { display: flex; align-items: center; gap: 0.8rem; }
+  .pay-lock { font-size: 0.9rem; }
+  .pay-header h3 { font-size: 0.95rem; font-weight: 700; font-family: 'Syne', sans-serif; }
+  .pay-header p { font-size: 0.72rem; color: #8888aa; margin-top: 1px; }
+  .pay-close { background: rgba(255,255,255,0.06); border: none; color: #f0f0f5; width: 30px; height: 30px; border-radius: 8px; cursor: pointer; font-size: 1rem; }
+  .pay-body { padding: 1.5rem; }
+  .pay-amount-box { background: rgba(0,229,255,0.06); border: 1px solid rgba(0,229,255,0.15); border-radius: 12px; padding: 1rem 1.2rem; margin-bottom: 1.5rem; display: flex; align-items: center; justify-content: space-between; }
+  .pay-amount-label { font-size: 0.78rem; color: #8888aa; margin-bottom: 2px; }
+  .pay-amount-val { font-family: 'Syne', sans-serif; font-size: 1.5rem; font-weight: 800; color: #00e5ff; }
+  .pay-items-mini { font-size: 0.72rem; color: #8888aa; text-align: right; }
+  .pay-methods { display: flex; gap: 0.6rem; margin-bottom: 1.5rem; }
+  .pay-method { flex: 1; background: #1c1c28; border: 2px solid transparent; border-radius: 10px; padding: 0.6rem; text-align: center; cursor: pointer; font-size: 0.75rem; font-weight: 600; color: #8888aa; transition: all 0.2s; }
+  .pay-method.selected { border-color: #00e5ff; color: #00e5ff; background: rgba(0,229,255,0.08); }
+  .pay-method-icon { font-size: 1.2rem; display: block; margin-bottom: 3px; }
+  .pay-section-label { font-size: 0.72rem; color: #8888aa; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 0.7rem; }
+  .pay-input-group { margin-bottom: 1rem; }
+  .pay-input-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0.8rem; margin-bottom: 1rem; }
+  .pay-label { display: block; font-size: 0.75rem; color: #8888aa; margin-bottom: 0.4rem; }
+  .pay-input { width: 100%; background: #1c1c28; border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; color: #f0f0f5; padding: 0.65rem 0.9rem; font-family: 'DM Sans', sans-serif; font-size: 0.88rem; outline: none; transition: border-color 0.2s; }
+  .pay-input:focus { border-color: rgba(0,229,255,0.4); }
+  .card-row { display: flex; align-items: center; background: #1c1c28; border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; overflow: hidden; margin-bottom: 1rem; }
+  .card-row .pay-input { border: none; flex: 1; }
+  .card-brands { display: flex; gap: 4px; padding: 0 0.6rem; }
+  .card-brand { font-size: 0.65rem; font-weight: 700; background: #2a2a3a; border-radius: 4px; padding: 2px 6px; color: #8888aa; }
+  .pay-secure-note { display: flex; align-items: center; gap: 6px; font-size: 0.72rem; color: #8888aa; margin-bottom: 1.2rem; }
+  .pay-btn { width: 100%; background: #00e5ff; color: #000; border: none; border-radius: 10px; padding: 0.9rem; font-size: 1rem; font-weight: 800; cursor: pointer; font-family: 'Syne', sans-serif; transition: transform 0.2s, box-shadow 0.2s; }
+  .pay-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(0,229,255,0.3); }
+  .pay-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; box-shadow: none; }
+  .pay-processing { text-align: center; padding: 2rem 1.5rem; }
+  .pay-spinner { width: 48px; height: 48px; border: 3px solid rgba(0,229,255,0.15); border-top-color: #00e5ff; border-radius: 50%; animation: spin 0.8s linear infinite; margin: 0 auto 1rem; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .pay-processing p { color: #8888aa; font-size: 0.88rem; }
+  .pay-success { text-align: center; padding: 2rem 1.5rem; }
+  .pay-success-icon { font-size: 3.5rem; margin-bottom: 1rem; }
+  .pay-success h3 { font-family: 'Syne', sans-serif; font-size: 1.3rem; font-weight: 800; color: #00e5ff; margin-bottom: 0.5rem; }
+  .pay-success p { color: #8888aa; font-size: 0.85rem; line-height: 1.6; }
+  .pay-order-ref { background: rgba(0,229,255,0.06); border: 1px solid rgba(0,229,255,0.15); border-radius: 10px; padding: 0.8rem 1rem; margin: 1rem 0; font-size: 0.82rem; color: #8888aa; }
+  .pay-order-ref strong { color: #00e5ff; font-family: 'Syne', sans-serif; }
+  .pay-done-btn { width: 100%; background: transparent; border: 1px solid rgba(0,229,255,0.3); color: #00e5ff; border-radius: 10px; padding: 0.75rem; font-size: 0.9rem; font-weight: 700; cursor: pointer; font-family: 'Syne', sans-serif; margin-top: 0.5rem; }
+
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    .nav-links, .nav-cta { display: none; }
+    .hamburger { display: flex; }
+    .hero-inner { grid-template-columns: 1fr; gap: 2rem; }
+    .hero-visual { display: none; }
+    .stats-inner { grid-template-columns: 1fr 1fr; }
+    .about-hero-inner { grid-template-columns: 1fr; }
+    .contact-grid { grid-template-columns: 1fr; }
+    .footer-inner { grid-template-columns: 1fr 1fr; gap: 2rem; }
+    .footer-brand { grid-column: 1 / -1; }
+    .form-row { grid-template-columns: 1fr; }
+    .newsletter-form { flex-direction: column; }
+    .promo-timer { flex-wrap: wrap; }
+  }
+  @media (max-width: 480px) {
+    .stats-inner { grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .footer-inner { grid-template-columns: 1fr; }
+    .hero h1 { font-size: 2rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo" onclick="showPage('home')">Volt<span>Zone</span></div>
+  <ul class="nav-links">
+    <li><a onclick="showPage('home')">Home</a></li>
+    <li><a onclick="showPage('products')">Products</a></li>
+    <li><a onclick="showPage('about')">About</a></li>
+    <li><a onclick="showPage('blog')">Blog</a></li>
+    <li><a onclick="showPage('contact')">Contact</a></li>
+    <li><a onclick="showPage('terms')">Terms</a></li>
+  </ul>
+  <div style="display:flex;align-items:center;gap:1rem;">
+    <button class="nav-cta" onclick="openCart()" style="display:flex;align-items:center;gap:6px;">
+      🛒 Cart <span class="cart-count" id="cartCount">0</span>
+    </button>
+    <button class="hamburger" onclick="toggleMobileNav()" id="hamburger">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- MOBILE NAV -->
+<div class="mobile-nav" id="mobileNav">
+  <a onclick="showPage('home');toggleMobileNav()">Home</a>
+  <a onclick="showPage('products');toggleMobileNav()">Products</a>
+  <a onclick="showPage('about');toggleMobileNav()">About</a>
+  <a onclick="showPage('blog');toggleMobileNav()">Blog</a>
+  <a onclick="showPage('contact');toggleMobileNav()">Contact</a>
+  <a onclick="showPage('terms');toggleMobileNav()">Terms</a>
+</div>
+
+<!-- =================== HOME PAGE =================== -->
+<div class="page active" id="page-home">
+
+  <section class="hero">
+    <div class="hero-inner">
+      <div class="hero-text">
+        <div class="hero-badge">Free shipping over $50</div>
+        <h1>Next-level <span class="accent">gadgets</span> for every lifestyle</h1>
+        <p>Discover the latest electronics, from cutting-edge smartphones to powerful accessories. Quality tech, unbeatable prices.</p>
+        <div class="hero-btns">
+          <button class="btn-primary" onclick="showPage('products')">Shop Now</button>
+          <button class="btn-outline" onclick="showPage('about')">Our Story</button>
+        </div>
+      </div>
+      <div class="hero-visual">
+        <div class="hero-phone">
+          <div class="phone-header">
+            <div class="phone-logo">VoltZone</div>
+            <div class="phone-cart">🛒</div>
+          </div>
+          <div class="phone-banner">
+            <div class="phone-banner-tag">⚡ Flash Deal</div>
+            <h3>Pro Wireless Buds</h3>
+            <p>Active Noise Cancellation · 30h battery</p>
+            <div class="phone-price">$79.99</div>
+          </div>
+          <div class="phone-grid">
+            <div class="phone-card"><div class="phone-card-emoji">📱</div><div class="phone-card-name">Smartphones</div><div class="phone-card-price">from $199</div></div>
+            <div class="phone-card"><div class="phone-card-emoji">💻</div><div class="phone-card-name">Laptops</div><div class="phone-card-price">from $499</div></div>
+            <div class="phone-card"><div class="phone-card-emoji">⌚</div><div class="phone-card-name">Smartwatches</div><div class="phone-card-price">from $89</div></div>
+            <div class="phone-card"><div class="phone-card-emoji">🎧</div><div class="phone-card-name">Audio</div><div class="phone-card-price">from $39</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="stats">
+    <div class="stats-inner">
+      <div class="stat-item"><div class="stat-num">12K+</div><div class="stat-label">Happy customers</div></div>
+      <div class="stat-item"><div class="stat-num">500+</div><div class="stat-label">Products listed</div></div>
+      <div class="stat-item"><div class="stat-num">4.9★</div><div class="stat-label">Average rating</div></div>
+      <div class="stat-item"><div class="stat-num">24/7</div><div class="stat-label">Customer support</div></div>
+    </div>
+  </div>
+
+  <section class="section">
+    <div class="section-inner">
+      <div class="section-header">
+        <div class="section-tag">Categories</div>
+        <h2 class="section-title">Shop by category</h2>
+      </div>
+      <div class="cat-grid">
+        <div class="cat-card" onclick="showPage('products')"><div class="cat-icon">📱</div><div class="cat-name">Smartphones</div><div class="cat-count">48 products</div></div>
+        <div class="cat-card" onclick="showPage('products')"><div class="cat-icon">💻</div><div class="cat-name">Laptops</div><div class="cat-count">32 products</div></div>
+        <div class="cat-card" onclick="showPage('products')"><div class="cat-icon">🎧</div><div class="cat-name">Audio</div><div class="cat-count">67 products</div></div>
+        <div class="cat-card" onclick="showPage('products')"><div class="cat-icon">⌚</div><div class="cat-name">Wearables</div><div class="cat-count">29 products</div></div>
+        <div class="cat-card" onclick="showPage('products')"><div class="cat-icon">🎮</div><div class="cat-name">Gaming</div><div class="cat-count">54 products</div></div>
+        <div class="cat-card" onclick="showPage('products')"><div class="cat-icon">📸</div><div class="cat-name">Cameras</div><div class="cat-count">21 products</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:0;">
+    <div class="section-inner">
+      <div class="section-header">
+        <div class="section-tag">Featured</div>
+        <h2 class="section-title">Best sellers this week</h2>
+      </div>
+      <div class="product-grid" id="featuredGrid"></div>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:0;">
+    <div class="section-inner">
+      <div class="promo">
+        <h2>⚡ Flash Sale — Up to 40% OFF</h2>
+        <p>Limited time offer on selected gadgets. Don't miss out!</p>
+        <div class="promo-timer">
+          <div class="timer-block"><div class="timer-num" id="t-h">08</div><div class="timer-label">Hours</div></div>
+          <div class="timer-block"><div class="timer-num" id="t-m">34</div><div class="timer-label">Mins</div></div>
+          <div class="timer-block"><div class="timer-num" id="t-s">22</div><div class="timer-label">Secs</div></div>
+        </div>
+        <button class="btn-primary" onclick="showPage('products')">See All Deals</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:0;">
+    <div class="section-inner">
+      <div class="newsletter">
+        <h3>Stay in the loop 📡</h3>
+        <p>Get weekly deals, new arrivals, and tech news delivered to your inbox.</p>
+        <div class="newsletter-form">
+          <input class="newsletter-input" type="email" placeholder="your@email.com">
+          <button class="newsletter-btn" onclick="showToast('✅','Subscribed! Check your inbox.')">Subscribe</button>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- =================== PRODUCTS PAGE =================== -->
+<div class="page" id="page-products">
+  <div class="page-header">
+    <div class="page-header-inner">
+      <h1>All Products</h1>
+      <p>500+ gadgets ready to ship. Free delivery on orders over $50.</p>
+      <div class="filters">
+        <button class="filter-btn active" onclick="filterProducts('all',this)">All</button>
+        <button class="filter-btn" onclick="filterProducts('phones',this)">📱 Phones</button>
+        <button class="filter-btn" onclick="filterProducts('audio',this)">🎧 Audio</button>
+        <button class="filter-btn" onclick="filterProducts('wearables',this)">⌚ Wearables</button>
+        <button class="filter-btn" onclick="filterProducts('gaming',this)">🎮 Gaming</button>
+        <button class="filter-btn" onclick="filterProducts('laptops',this)">💻 Laptops</button>
+      </div>
+    </div>
+  </div>
+  <section class="section">
+    <div class="section-inner">
+      <div class="product-grid" id="productsGrid"></div>
+    </div>
+  </section>
+</div>
+
+<!-- =================== ABOUT PAGE =================== -->
+<div class="page" id="page-about">
+  <section class="about-hero">
+    <div class="about-hero-inner">
+      <div>
+        <div class="section-tag">About VoltZone</div>
+        <h1>Powering your digital life since 2019</h1>
+        <p>We started VoltZone with a simple belief: everyone deserves access to great technology at fair prices. No markups, no tricks — just quality electronics and honest service.</p>
+        <p>Today we ship to 40+ countries and carry over 500 carefully curated products from the world's leading tech brands.</p>
+        <button class="btn-primary" style="margin-top:1rem;" onclick="showPage('products')">Shop Our Store</button>
+      </div>
+      <div class="about-visual">⚡</div>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:0;">
+    <div class="section-inner">
+      <div class="section-header">
+        <div class="section-tag">Our Values</div>
+        <h2 class="section-title">What we stand for</h2>
+      </div>
+      <div class="values-grid">
+        <div class="value-card"><div class="value-icon">🔍</div><div class="value-title">Transparency</div><div class="value-desc">No hidden fees, no surprise charges. The price you see is the price you pay.</div></div>
+        <div class="value-card"><div class="value-icon">⚡</div><div class="value-title">Speed</div><div class="value-desc">Same-day dispatch on orders placed before 2 PM. Fast shipping worldwide.</div></div>
+        <div class="value-card"><div class="value-icon">🛡️</div><div class="value-title">Quality</div><div class="value-desc">Every product is tested and verified before listing. 30-day return guarantee.</div></div>
+        <div class="value-card"><div class="value-icon">🌍</div><div class="value-title">Sustainability</div><div class="value-desc">Eco-friendly packaging and carbon-neutral shipping options available.</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" style="padding-top:0;">
+    <div class="section-inner">
+      <div class="section-header">
+        <div class="section-tag">Team</div>
+        <h2 class="section-title">The people behind VoltZone</h2>
+      </div>
+      <div class="team-grid">
+        <div class="team-card"><div class="team-avatar">👨‍💼</div><div class="team-name">Alex Popescu</div><div class="team-role">CEO & Founder</div></div>
+        <div class="team-card"><div class="team-avatar">👩‍💻</div><div class="team-name">Maria Ionescu</div><div class="team-role">Head of Technology</div></div>
+        <div class="team-card"><div class="team-avatar">👨‍🎨</div><div class="team-name">Dani Rusu</div><div class="team-role">Lead Designer</div></div>
+        <div class="team-card"><div class="team-avatar">👩‍📦</div><div class="team-name">Elena Dumitrescu</div><div class="team-role">Operations Manager</div></div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- =================== BLOG PAGE =================== -->
+<div class="page" id="page-blog">
+  <div class="page-header">
+    <div class="page-header-inner">
+      <h1>Tech Blog</h1>
+      <p>News, reviews, buying guides, and tips from our tech experts.</p>
+    </div>
+  </div>
+  <section class="section">
+    <div class="section-inner">
+      <div class="blog-grid">
+        <div class="blog-card"><div class="blog-img">📱</div><div class="blog-content"><div class="blog-tag">Review</div><div class="blog-title">Best smartphones under $300 in 2026</div><div class="blog-excerpt">We tested 12 budget phones to find the best value for money. Here are our top picks and what makes each one special.</div><div class="blog-meta"><div class="blog-author-dot">AV</div><span>Alex V. · Mar 12</span><span>· 5 min read</span></div></div></div>
+        <div class="blog-card"><div class="blog-img">🎧</div><div class="blog-content"><div class="blog-tag">Guide</div><div class="blog-title">ANC headphones: are they worth it?</div><div class="blog-excerpt">Active Noise Cancellation has become a standard feature in premium audio. But does the tech actually deliver? We break it down.</div><div class="blog-meta"><div class="blog-author-dot">MI</div><span>Maria I. · Mar 8</span><span>· 7 min read</span></div></div></div>
+        <div class="blog-card"><div class="blog-img">⌚</div><div class="blog-content"><div class="blog-tag">News</div><div class="blog-title">Smartwatch trends to watch in 2026</div><div class="blog-excerpt">From health monitoring to satellite connectivity — wearable tech is evolving faster than ever. Here's what's coming next.</div><div class="blog-meta"><div class="blog-author-dot">DR</div><span>Dani R. · Feb 28</span><span>· 4 min read</span></div></div></div>
+        <div class="blog-card"><div class="blog-img">💻</div><div class="blog-content"><div class="blog-tag">Buying Guide</div><div class="blog-title">How to choose the right laptop for university</div><div class="blog-excerpt">MacBook vs Windows vs Chromebook — which is best for students? We compare battery life, performance, and price.</div><div class="blog-meta"><div class="blog-author-dot">ED</div><span>Elena D. · Feb 20</span><span>· 8 min read</span></div></div></div>
+        <div class="blog-card"><div class="blog-img">🎮</div><div class="blog-content"><div class="blog-tag">Review</div><div class="blog-title">Top gaming accessories that won't break the bank</div><div class="blog-excerpt">Gaming doesn't have to be expensive. These controllers, headsets, and mice offer pro-level performance at budget prices.</div><div class="blog-meta"><div class="blog-author-dot">AV</div><span>Alex V. · Feb 15</span><span>· 6 min read</span></div></div></div>
+        <div class="blog-card"><div class="blog-img">🔋</div><div class="blog-content"><div class="blog-tag">Tips</div><div class="blog-title">5 ways to extend your phone's battery life</div><div class="blog-excerpt">Simple settings changes and habits that can double the time between charges — no app downloads required.</div><div class="blog-meta"><div class="blog-author-dot">MI</div><span>Maria I. · Feb 5</span><span>· 3 min read</span></div></div></div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- =================== CONTACT PAGE =================== -->
+<div class="page" id="page-contact">
+  <div class="page-header">
+    <div class="page-header-inner">
+      <h1>Contact Us</h1>
+      <p>Got a question? We typically reply within 2 hours.</p>
+    </div>
+  </div>
+  <section class="section">
+    <div class="section-inner">
+      <div class="contact-grid">
+        <div class="contact-info">
+          <h2>Let's talk tech</h2>
+          <p>Whether you need help choosing a product, tracking an order, or dealing with a return — our team is here to help.</p>
+          <div class="contact-items">
+            <div class="contact-item"><div class="contact-icon">📧</div><div><div class="contact-text-label">Email</div><div class="contact-text-val">hello@voltzone.com</div></div></div>
+            <div class="contact-item"><div class="contact-icon">📞</div><div><div class="contact-text-label">Phone</div><div class="contact-text-val">+40 721 000 111</div></div></div>
+            <div class="contact-item"><div class="contact-icon">⏰</div><div><div class="contact-text-label">Support Hours</div><div class="contact-text-val">Mon–Fri, 9:00 AM – 6:00 PM</div></div></div>
+            <div class="contact-item"><div class="contact-icon">📍</div><div><div class="contact-text-label">Address</div><div class="contact-text-val">Str. Victoriei 12, Bucharest</div></div></div>
+          </div>
+        </div>
+        <div class="form-card">
+          <h3 style="font-family:'Syne',sans-serif;font-weight:700;margin-bottom:1.5rem;font-size:1.1rem;">Send us a message</h3>
+          <div class="form-row">
+            <div class="form-group"><label class="form-label">First name</label><input class="form-input" type="text" placeholder="Alex"></div>
+            <div class="form-group"><label class="form-label">Last name</label><input class="form-input" type="text" placeholder="Popescu"></div>
+          </div>
+          <div class="form-group"><label class="form-label">Email</label><input class="form-input" type="email" placeholder="alex@email.com"></div>
+          <div class="form-group"><label class="form-label">Subject</label><input class="form-input" type="text" placeholder="Order #VZ-1234 issue"></div>
+          <div class="form-group"><label class="form-label">Message</label><textarea class="form-textarea" placeholder="Describe your issue or question..."></textarea></div>
+          <button class="btn-primary" style="width:100%;" onclick="showToast('📨','Message sent! We will reply shortly.')">Send Message</button>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- =================== TERMS PAGE =================== -->
+<div class="page" id="page-terms">
+  <div class="page-header">
+    <div class="page-header-inner">
+      <h1>Terms & Conditions</h1>
+      <p>Last updated: January 2026</p>
+    </div>
+  </div>
+  <section class="section">
+    <div class="section-inner">
+      <div class="terms-content">
+        <h2>1. Introduction</h2>
+        <p>Welcome to VoltZone ("we", "us", "our"). By accessing or using our website at voltzone.com, you agree to be bound by these Terms and Conditions. Please read them carefully before making a purchase.</p>
+
+        <h2>2. Products and Pricing</h2>
+        <p>All prices are displayed in USD and include applicable taxes unless stated otherwise. We reserve the right to change prices at any time without prior notice. Product images are for illustrative purposes only and may differ slightly from the actual product.</p>
+
+        <h2>3. Payment (One-Time Payments)</h2>
+        <p>VoltZone operates on a one-time payment model. Each purchase is a single transaction — you pay once and own the product. We do not store card details on our servers. All payments are processed securely via Stripe or PayPal.</p>
+        <p>Accepted payment methods include:</p>
+        <ul>
+          <li>Credit and debit cards (Visa, Mastercard, Amex)</li>
+          <li>PayPal</li>
+          <li>Apple Pay / Google Pay</li>
+          <li>Bank transfer (for orders over $500)</li>
+        </ul>
+
+        <h2>4. Shipping & Delivery</h2>
+        <p>We ship worldwide. Standard delivery takes 3–7 business days within Europe, and 7–14 days internationally. Express shipping is available at checkout. Free standard shipping applies to all orders over $50.</p>
+
+        <h2>5. Returns & Refunds</h2>
+        <p>We offer a 30-day return policy. Items must be returned in original condition and packaging. To initiate a return, contact us at returns@voltzone.com. Refunds are processed within 5–7 business days after we receive the item.</p>
+
+        <h2>6. Warranty</h2>
+        <p>All products sold by VoltZone come with a minimum 12-month manufacturer's warranty. Extended warranties may be purchased at checkout. Warranty does not cover physical damage, water damage, or unauthorized modifications.</p>
+
+        <h2>7. Privacy Policy</h2>
+        <p>We collect only the data necessary to process your order and improve your shopping experience. We do not sell your data to third parties. For full details, see our Privacy Policy page. We comply with GDPR regulations for EU customers.</p>
+
+        <h2>8. Limitation of Liability</h2>
+        <p>VoltZone shall not be liable for any indirect, incidental, or consequential damages arising from the use of our products or services. Our maximum liability is limited to the purchase price of the product in question.</p>
+
+        <h2>9. Governing Law</h2>
+        <p>These terms are governed by the laws of Romania. Any disputes shall be resolved in the courts of Bucharest, Romania.</p>
+
+        <h2>10. Contact</h2>
+        <p>For any questions about these terms, contact us at legal@voltzone.com or write to: VoltZone SRL, Str. Victoriei 12, Bucharest, Romania.</p>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <div class="logo" style="margin-bottom:0.8rem;">Volt<span style="color:var(--text);">Zone</span></div>
+      <p>Your one-stop shop for the latest electronics and gadgets. Quality tech at honest prices, shipped worldwide.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Shop</h4>
+      <ul>
+        <li onclick="showPage('products')">All Products</li>
+        <li onclick="showPage('products')">New Arrivals</li>
+        <li onclick="showPage('products')">Deals</li>
+        <li onclick="showPage('products')">Brands</li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Company</h4>
+      <ul>
+        <li onclick="showPage('about')">About Us</li>
+        <li onclick="showPage('blog')">Blog</li>
+        <li onclick="showPage('contact')">Contact</li>
+        <li>Careers</li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Legal</h4>
+      <ul>
+        <li onclick="showPage('terms')">Terms & Conditions</li>
+        <li onclick="showPage('terms')">Privacy Policy</li>
+        <li onclick="showPage('terms')">Cookie Policy</li>
+        <li onclick="showPage('terms')">Returns</li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2026 VoltZone SRL. All rights reserved.</p>
+    <div class="footer-badges">
+      <span class="payment-badge">VISA</span>
+      <span class="payment-badge">MC</span>
+      <span class="payment-badge">PayPal</span>
+      <span class="payment-badge">Stripe</span>
+    </div>
+  </div>
+</footer>
+
+<!-- CART OVERLAY -->
+<div class="cart-overlay" id="cartOverlay" onclick="closeCartIfOutside(event)">
+  <div class="cart-panel">
+    <div class="cart-header">
+      <h2>Shopping Cart</h2>
+      <button class="close-btn" onclick="openCart()">✕</button>
+    </div>
+    <div id="cartItems"></div>
+    <div class="cart-total" id="cartTotal" style="display:none;">
+      <div class="cart-total-row"><span>Subtotal</span><span id="subtotal">$0.00</span></div>
+      <div class="cart-total-row"><span>Shipping</span><span>Free</span></div>
+      <div class="cart-total-row total"><span>Total</span><span id="totalPrice">$0.00</span></div>
+      <button class="checkout-btn" onclick="checkout()">Checkout — Pay Now</button>
+    </div>
+  </div>
+</div>
+
+<!-- PAYMENT MODAL -->
+<div class="pay-overlay" id="payOverlay">
+  <div class="pay-modal">
+    <div class="pay-header">
+      <div class="pay-header-left">
+        <span class="pay-lock">🔒</span>
+        <div>
+          <h3>Secure Checkout</h3>
+          <p>256-bit SSL encryption · Powered by Stripe</p>
+        </div>
+      </div>
+      <button class="pay-close" onclick="closePayModal()">✕</button>
+    </div>
+    <div id="payStep1">
+      <div class="pay-body">
+        <div class="pay-amount-box">
+          <div>
+            <div class="pay-amount-label">Total to pay</div>
+            <div class="pay-amount-val" id="payAmount">$0.00</div>
+          </div>
+          <div class="pay-items-mini" id="payItemsSummary"></div>
+        </div>
+        <div class="pay-section-label">Payment method</div>
+        <div class="pay-methods">
+          <div class="pay-method selected" onclick="selectMethod(this)"><span class="pay-method-icon">💳</span>Card</div>
+          <div class="pay-method" onclick="selectMethod(this)"><span class="pay-method-icon">🅿️</span>PayPal</div>
+          <div class="pay-method" onclick="selectMethod(this)"><span class="pay-method-icon"></span>Apple Pay</div>
+          <div class="pay-method" onclick="selectMethod(this)"><span class="pay-method-icon">G</span>Google Pay</div>
+        </div>
+        <div id="cardForm">
+          <div class="pay-section-label">Card details</div>
+          <div class="pay-input-group">
+            <label class="pay-label">Cardholder name</label>
+            <input class="pay-input" type="text" placeholder="Alex Popescu" id="payName">
+          </div>
+          <label class="pay-label">Card number</label>
+          <div class="card-row" style="margin-bottom:1rem;">
+            <input class="pay-input" type="text" placeholder="1234 5678 9012 3456" id="payCard" maxlength="19" oninput="formatCard(this)">
+            <div class="card-brands"><span class="card-brand">VISA</span><span class="card-brand">MC</span></div>
+          </div>
+          <div class="pay-input-row">
+            <div><label class="pay-label">Expiry date</label><input class="pay-input" type="text" placeholder="MM/YY" maxlength="5" oninput="formatExpiry(this)"></div>
+            <div><label class="pay-label">CVV</label><input class="pay-input" type="text" placeholder="123" maxlength="3"></div>
+          </div>
+          <div class="pay-input-group">
+            <label class="pay-label">Billing email</label>
+            <input class="pay-input" type="email" placeholder="alex@email.com" id="payEmail">
+          </div>
+        </div>
+        <div class="pay-secure-note">🛡️ Your payment is protected by end-to-end encryption. We never store card data.</div>
+        <button class="pay-btn" id="payNowBtn" onclick="processPayment()">Pay <span id="payBtnAmount">$0.00</span></button>
+      </div>
+    </div>
+    <div id="payStep2" style="display:none;">
+      <div class="pay-processing">
+        <div class="pay-spinner"></div>
+        <h3 style="font-family:'Syne',sans-serif;font-weight:700;margin-bottom:0.5rem;">Processing payment...</h3>
+        <p>Please wait. Do not close this window.</p>
+      </div>
+    </div>
+    <div id="payStep3" style="display:none;">
+      <div class="pay-success">
+        <div class="pay-success-icon">✅</div>
+        <h3>Payment Successful!</h3>
+        <p>Thank you for your order. A confirmation has been sent to your email.</p>
+        <div class="pay-order-ref">Order reference: <strong id="orderRef">#VZ-000000</strong><br><span style="font-size:0.75rem;">Expected delivery: 3–5 business days</span></div>
+        <button class="pay-done-btn" onclick="paymentDone()">Back to Shop</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <span class="toast-icon" id="toastIcon"></span>
+  <span class="toast-text" id="toastText"></span>
+</div>
+
+<script>
+const products = [
+  { id:1, name:'ProBuds X3', cat:'audio', emoji:'🎧', price:79.99, oldPrice:129.99, badge:'Sale', desc:'ANC wireless earbuds with 30h battery and crystal-clear sound.' },
+  { id:2, name:'NovaPhone 14', cat:'phones', emoji:'📱', price:349.99, oldPrice:null, badge:'New', desc:'6.7" AMOLED display, 200MP camera, 5G ready.' },
+  { id:3, name:'ZenWatch Pro', cat:'wearables', emoji:'⌚', price:149.99, oldPrice:199.99, badge:'Sale', desc:'Health tracking, GPS, and 7-day battery life.' },
+  { id:4, name:'GamePad Elite', cat:'gaming', emoji:'🎮', price:59.99, oldPrice:null, badge:null, desc:'Ergonomic wireless controller with haptic feedback.' },
+  { id:5, name:'UltraBook Air', cat:'laptops', emoji:'💻', price:699.99, oldPrice:899.99, badge:'Deal', desc:'14" 2K display, 18h battery, ultra-thin aluminum body.' },
+  { id:6, name:'VoltCam 4K', cat:'cameras', emoji:'📸', price:249.99, oldPrice:null, badge:'New', desc:'4K action camera with image stabilization and waterproofing.' },
+  { id:7, name:'MiniPod Duo', cat:'audio', emoji:'🎵', price:39.99, oldPrice:59.99, badge:'Sale', desc:'Compact earbuds with deep bass and sweat resistance.' },
+  { id:8, name:'TabletX Pro', cat:'phones', emoji:'📟', price:529.99, oldPrice:null, badge:'New', desc:'12" display with stylus support and 256GB storage.' },
+  { id:9, name:'FitBand Ultra', cat:'wearables', emoji:'🏃', price:89.99, oldPrice:null, badge:null, desc:'Advanced fitness tracker with blood oxygen monitoring.' },
+  { id:10, name:'GameBoost Hub', cat:'gaming', emoji:'🕹️', price:34.99, oldPrice:49.99, badge:'Sale', desc:'USB-C hub with cooling fan and 4 USB ports for gaming setups.' },
+  { id:11, name:'SlimBook 15', cat:'laptops', emoji:'🖥️', price:849.99, oldPrice:null, badge:'New', desc:'15.6" FHD, 32GB RAM, 1TB SSD, perfect for professionals.' },
+  { id:12, name:'SparkCharge 65W', cat:'audio', emoji:'🔌', price:29.99, oldPrice:44.99, badge:'Sale', desc:'65W GaN fast charger with 3 ports — charge everything at once.' },
+];
+
+let cart = {};
+let currentFilter = 'all';
+
+function renderProducts(containerId, items) {
+  const grid = document.getElementById(containerId);
+  grid.innerHTML = items.map(p => `
+    <div class="product-card">
+      <div class="product-img">
+        ${p.emoji}
+        ${p.badge ? `<div class="badge">${p.badge}</div>` : ''}
+      </div>
+      <div class="product-info">
+        <div class="product-cat">${p.cat}</div>
+        <div class="product-name">${p.name}</div>
+        <div class="product-desc">${p.desc}</div>
+        <div class="product-footer">
+          <div class="product-price">
+            ${p.oldPrice ? `<span class="old">$${p.oldPrice}</span>` : ''}
+            $${p.price.toFixed(2)}
+          </div>
+          <button class="add-btn" onclick="addToCart(${p.id})">+</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function filterProducts(cat, btn) {
+  currentFilter = cat;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const filtered = cat === 'all' ? products : products.filter(p => p.cat === cat);
+  renderProducts('productsGrid', filtered);
+}
+
+function addToCart(id) {
+  const p = products.find(x => x.id === id);
+  if (!p) return;
+  if (cart[id]) { cart[id].qty++; } else { cart[id] = { ...p, qty: 1 }; }
+  updateCartUI();
+  showToast('🛒', `${p.name} added to cart!`);
+}
+
+function updateCartUI() {
+  const total = Object.values(cart).reduce((s, i) => s + i.qty, 0);
+  document.getElementById('cartCount').textContent = total;
+  const itemsEl = document.getElementById('cartItems');
+  const totalEl = document.getElementById('cartTotal');
+  const items = Object.values(cart);
+  if (items.length === 0) {
+    itemsEl.innerHTML = '<div class="empty-cart"><div class="empty-cart-icon">🛒</div><p>Your cart is empty</p></div>';
+    totalEl.style.display = 'none';
+    return;
+  }
+  const subtotal = items.reduce((s, i) => s + i.price * i.qty, 0);
+  itemsEl.innerHTML = items.map(i => `
+    <div class="cart-item">
+      <div class="cart-item-img">${i.emoji}</div>
+      <div style="flex:1;">
+        <div class="cart-item-name">${i.name}</div>
+        <div class="cart-item-price">$${(i.price * i.qty).toFixed(2)}</div>
+        <div class="cart-item-qty">
+          <button class="qty-btn" onclick="changeQty(${i.id},-1)">−</button>
+          <span style="font-size:0.88rem;font-weight:600;">${i.qty}</span>
+          <button class="qty-btn" onclick="changeQty(${i.id},1)">+</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+  document.getElementById('subtotal').textContent = `$${subtotal.toFixed(2)}`;
+  document.getElementById('totalPrice').textContent = `$${subtotal.toFixed(2)}`;
+  totalEl.style.display = 'block';
+}
+
+function changeQty(id, delta) {
+  if (!cart[id]) return;
+  cart[id].qty += delta;
+  if (cart[id].qty <= 0) delete cart[id];
+  updateCartUI();
+}
+
+function openCart() {
+  const overlay = document.getElementById('cartOverlay');
+  overlay.classList.toggle('open');
+  updateCartUI();
+}
+
+function closeCartIfOutside(e) {
+  if (e.target === document.getElementById('cartOverlay')) openCart();
+}
+
+function checkout() {
+  const items = Object.values(cart);
+  if (items.length === 0) return;
+  const subtotal = items.reduce((s, i) => s + i.price * i.qty, 0);
+  document.getElementById('payAmount').textContent = '$' + subtotal.toFixed(2);
+  document.getElementById('payBtnAmount').textContent = '$' + subtotal.toFixed(2);
+  document.getElementById('payItemsSummary').innerHTML = items.map(i => i.qty + 'x ' + i.name).join('<br>');
+  document.getElementById('payStep1').style.display = '';
+  document.getElementById('payStep2').style.display = 'none';
+  document.getElementById('payStep3').style.display = 'none';
+  document.getElementById('payOverlay').classList.add('open');
+  openCart();
+}
+
+function closePayModal() {
+  document.getElementById('payOverlay').classList.remove('open');
+}
+
+function selectMethod(el) {
+  document.querySelectorAll('.pay-method').forEach(m => m.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function formatCard(input) {
+  let v = input.value.replace(/[^0-9]/g,'').substring(0,16);
+  input.value = v.replace(/(.{4})/g,'$1 ').trim();
+}
+
+function formatExpiry(input) {
+  let v = input.value.replace(/[^0-9]/g,'');
+  if (v.length >= 2) v = v.substring(0,2) + '/' + v.substring(2,4);
+  input.value = v;
+}
+
+function processPayment() {
+  document.getElementById('payStep1').style.display = 'none';
+  document.getElementById('payStep2').style.display = '';
+  setTimeout(function() {
+    document.getElementById('payStep2').style.display = 'none';
+    document.getElementById('payStep3').style.display = '';
+    var ref = '#VZ-' + Math.floor(100000 + Math.random() * 900000);
+    document.getElementById('orderRef').textContent = ref;
+  }, 2500);
+}
+
+function paymentDone() {
+  cart = {};
+  updateCartUI();
+  closePayModal();
+  showToast('Congrats', 'Order confirmed! Check your email for details.');
+}
+
+function showPage(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+  window.scrollTo(0, 0);
+  if (page === 'products') renderProducts('productsGrid', products);
+}
+
+function toggleMobileNav() {
+  document.getElementById('mobileNav').classList.toggle('open');
+}
+
+function showToast(icon, text) {
+  const toast = document.getElementById('toast');
+  document.getElementById('toastIcon').textContent = icon;
+  document.getElementById('toastText').textContent = text;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 3000);
+}
+
+function startTimer() {
+  let total = 8 * 3600 + 34 * 60 + 22;
+  setInterval(() => {
+    if (total <= 0) return;
+    total--;
+    const h = String(Math.floor(total / 3600)).padStart(2,'0');
+    const m = String(Math.floor((total % 3600) / 60)).padStart(2,'0');
+    const s = String(total % 60).padStart(2,'0');
+    document.getElementById('t-h').textContent = h;
+    document.getElementById('t-m').textContent = m;
+    document.getElementById('t-s').textContent = s;
+  }, 1000);
+}
+
+renderProducts('featuredGrid', products.slice(0, 4));
+renderProducts('productsGrid', products);
+startTimer();
+</script>
+</body>
+</html>
