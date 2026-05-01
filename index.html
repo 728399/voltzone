@@ -807,7 +807,12 @@ function addToCart(id) {
   if (!p) return;
   cart[id] ? cart[id].qty++ : (cart[id] = {...p, qty:1});
   updateCart();
-  showToast('🛒', `${p.name} added!`);
+  openCart();
+}
+
+function openCart() {
+  document.getElementById('cartOverlay').classList.add('open');
+  updateCart();
 }
 
 function updateCart() {
